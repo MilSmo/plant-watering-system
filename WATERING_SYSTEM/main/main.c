@@ -50,15 +50,42 @@
 
 #include "ssd1306.h"
 #include "font8x8_basic.h"
-#include "../sensor/SolidMoistureSensor.h"
+#include "../sensor/SolidMoistureSensor.c"
+#include "../relay/relay.c"
 
 #define tag "WATERING_SYSTEM"
 
 #define CONFIG_SCL_GPIO 22
 #define CONFIG_SDA_GPIO 21
 #define CONFIG_RESET_GPIO 15
+#define LED_PIN 2
+
+void display_moisture(void *pvParameters)
+{
+    SSD1306_t *dev = (SSD1306_t *)pvParameters;
+    SolidMoistureSensor_t moisture_sensor;
+    solid_moisture_sensor_init(&moisture_sensor, 36);
+    char lineChar[20];
+    
+    while(1){
+        float moisture = solid_moisture_sensor_read(&moisture_sensor);
+        snprintf(lineChar, sizeof(lineChar), "%5.2f%%", moisture);
+        ssd1306_display_text(dev, 4, lineChar, strlen(lineChar), false);
+
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+}
 
 
+void led_state(void *pvParameters) {
+    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
+   
+   while (1)
+   {
+     gpio_set_level(LED_PIN, 1);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+   } 
+}
 
 void app_main(void)
 {
@@ -72,31 +99,44 @@ void app_main(void)
 
     SSD1306_t dev;
 	int center, top, bottom;
-	char lineChar[20];
-
-    
-	i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
-
-	ssd1306_init(&dev, 128, 64);
-
 
     ESP_LOGI(tag, "Turning display on");
+
+    i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
+    ssd1306_init(&dev, 128, 64);
     ssd1306_clear_screen(&dev, false);
+
     ssd1306_display_text(&dev, 1, "Wilgotnosc:", 11, false);
 
-    int seconds = 0;
-    int minutes = 0;
-    int hours = 0;
+    xTaskCreate(&led_state, "LED_STATE", 4096, NULL, 5, NULL);
 
-
-    SolidMoistureSensor_t moisture_sensor;
-    solid_moisture_sensor_init(&moisture_sensor, 36);
     
-    while (1) {
-        float moisture = solid_moisture_sensor_read(&moisture_sensor);
-        snprintf(lineChar, sizeof(lineChar), "%5.2f%%", moisture);
-        ssd1306_display_text(&dev, 4, lineChar, 6, false);
 
+    xTaskCreate(display_moisture, "display_moisture", 2048, &dev, 5, NULL);
+    // while (1) {
+    //     float moisture = solid_moisture_sensor_read(&moisture_sensor);
+    //     snprintf(lineChar, sizeof(lineChar), "%5.2f%%", moisture);
+    //     ssd1306_display_text(&dev, 4, lineChar, 6, false);
+
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
+    // }
+
+    relay_t relay;
+    relay_init(&relay, GPIO_NUM_5); // Inicjalizacja przekaźnika na pinie GPIO 5
+
+    // Włącz przekaźnik
+    relay_on(&relay);
+
+    // Opóźnienie
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    // Wyłącz przekaźnik
+    relay_off(&relay);
+
+    while (1) {
+        relay_off(&relay);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
+        relay_on(&relay);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }   
