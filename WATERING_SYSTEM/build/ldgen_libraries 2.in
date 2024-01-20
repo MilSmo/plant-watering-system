@@ -33,7 +33,6 @@ $<TARGET_FILE:__idf_esp_netif>
 $<TARGET_FILE:__idf_wpa_supplicant>
 $<TARGET_FILE:__idf_esp_coex>
 $<TARGET_FILE:__idf_esp_wifi>
-$<TARGET_FILE:__idf_bt>
 $<TARGET_FILE:__idf_unity>
 $<TARGET_FILE:__idf_cmock>
 $<TARGET_FILE:__idf_console>
@@ -61,5 +60,7 @@ $<TARGET_FILE:__idf_perfmon>
 $<TARGET_FILE:__idf_spiffs>
 $<TARGET_FILE:__idf_wifi_provisioning>
 $<TARGET_FILE:__idf_main>
-$<TARGET_FILE:__idf_qrcode>
-$<TARGET_FILE:__idf_provisioning>
+$<TARGET_FILE:__idf_protocol_examples_common>
+$<TARGET_FILE:__idf_oled>
+$<TARGET_FILE:__idf_relay>
+$<TARGET_FILE:__idf_sensor>

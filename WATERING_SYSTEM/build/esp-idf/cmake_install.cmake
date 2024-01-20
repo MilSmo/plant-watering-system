@@ -409,17 +409,17 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/protocol_examples_common/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/oled/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/qrcode/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/provisioning/cmake_install.cmake")
+  include("/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/relay/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)

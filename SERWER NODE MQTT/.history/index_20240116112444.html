@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Control Pump</title>
+</head>
+<body>
+
+<button id="pumpOn">Turn Pump ON</button>
+<button id="pumpOff">Turn Pump OFF</button>
+
+<script>
+document.getElementById('pumpOn').addEventListener('click', () => {
+    fetch('/api/control_pump?command=on', { method: 'POST' })
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+});
+
+document.getElementById('pumpOff').addEventListener('click', () => {
+    fetch('/api/control_pump?command=off', { method: 'POST' })
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+});
+</script>
+
+</body>
+</html>

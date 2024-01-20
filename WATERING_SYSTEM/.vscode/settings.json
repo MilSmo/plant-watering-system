@@ -1,0 +1,30 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.adapterTargetName": "esp32",
+    "idf.customExtraPaths": "/Users/mati/.espressif/tools/xtensa-esp-elf-gdb/12.1_20221002/xtensa-esp-elf-gdb/bin:/Users/mati/.espressif/tools/riscv32-esp-elf-gdb/12.1_20221002/riscv32-esp-elf-gdb/bin:/Users/mati/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin:/Users/mati/.espressif/tools/xtensa-esp32s2-elf/esp-12.2.0_20230208/xtensa-esp32s2-elf/bin:/Users/mati/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin:/Users/mati/.espressif/tools/riscv32-esp-elf/esp-12.2.0_20230208/riscv32-esp-elf/bin:/Users/mati/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/Users/mati/.espressif/tools/cmake/3.24.0/CMake.app/Contents/bin:/Users/mati/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/bin:/Users/mati/.espressif/tools/ninja/1.10.2:/Users/mati/.espressif/tools/esp-rom-elfs/20230320",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "/Users/mati/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/share/openocd/scripts",
+        "ESP_ROM_ELF_DIR": "/Users/mati/.espressif/tools/esp-rom-elfs/20230320/"
+    },
+    "idf.espIdfPath": "/Users/mati/esp/esp-idf",
+    "idf.openOcdConfigs": [
+        "board/esp32-wrover-kit-3.3v.cfg"
+    ],
+    "idf.port": "/dev/cu.usbserial-0001",
+    "idf.pythonBinPath": "/Users/mati/.espressif/python_env/idf5.1_py3.9_env/bin/python",
+    "idf.toolsPath": "/Users/mati/.espressif",
+    "files.associations": {
+        "qrcode.h": "c",
+        "wifi-provisioning.h": "c",
+        "font8x8_basic.h": "c",
+        "ssd1306.h": "c",
+        "scheme_ble.h": "c",
+        "solidmoisturesensor.h": "c",
+        "esp_event.h": "c",
+        "manager.h": "c",
+        "esp_wifi.h": "c",
+        "sdkconfig.h": "c",
+        "esp_log.h": "c"
+    },
+    "idf.flashType": "UART"
+}

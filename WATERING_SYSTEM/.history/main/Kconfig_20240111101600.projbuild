@@ -1,0 +1,53 @@
+menu "ESP-MQTT Configurations"
+
+    config MQTT_PROTOCOL_311
+        bool "Enable MQTT Protocol 3.1.1"
+        default y
+        help
+            Enable MQTT 3.1.1 protocol.
+    
+    config MQTT_TRANSPORT_SSL
+        bool "Enable MQTT over SSL"
+        default y
+        help
+            Enable MQTT connection over SSL for secure communication.
+    
+    config MQTT_TRANSPORT_WEBSOCKET
+        bool "Enable MQTT over WebSocket"
+        default y
+        help
+            Enable MQTT connection over WebSocket.
+    
+    config MQTT_TRANSPORT_WEBSOCKET_SECURE
+        bool "Enable MQTT over WebSocket Secure"
+        default y
+        help
+            Enable MQTT connection over WebSocket Secure for encrypted communication.
+    
+    # Add other MQTT configurations here as needed.
+
+    config BROKER_URL
+        string "Broker URL"
+        default "mqtt://172.20.10.9"
+        help
+            The URL of the MQTT broker to connect to.
+    
+    config EXAMPLE_WIFI_SSID
+        string "WiFi SSID"
+        default "Mateusz"
+        help
+            SSID of the WiFi to connect to.
+    
+    config EXAMPLE_WIFI_PASSWORD
+        string "WiFi Password"
+        default "Qazwsxedc"
+        help
+            Password for the WiFi connection.
+
+    config BROKER_URL_FROM_STDIN
+        bool
+        default y if BROKER_URL = "FROM_STDIN"
+    
+    config EXAMPLE_CONNECT_WIFI=y
+    endmenu
+    

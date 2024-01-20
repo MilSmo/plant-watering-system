@@ -1,0 +1,4 @@
+idf_component_register(SRCS "mqtt.c"
+                    INCLUDE_DIRS "."
+                    REQUIRES driver esp_wifi esp_http_server json mqtt nvs_flash protocol_examples_common
+                    )
