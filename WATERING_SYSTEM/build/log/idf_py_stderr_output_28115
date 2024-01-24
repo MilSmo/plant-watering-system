@@ -1,0 +1,6 @@
+warning: default on the choice symbol BT_BLUEDROID_ENABLED (defined at /Users/mati/Documents/IoT/WATERING_SYSTEM/main/Kconfig.projbuild:56, /Users/mati/esp/esp-idf/components/bt/Kconfig:17) will have no effect, as defaults do not affect choice symbols
+warning: the choice symbol BT_BLUEDROID_ENABLED (defined at /Users/mati/Documents/IoT/WATERING_SYSTEM/main/Kconfig.projbuild:56, /Users/mati/esp/esp-idf/components/bt/Kconfig:17) is defined with a prompt outside the choice
+warning: default on the choice symbol BT_CONTROLLER_ENABLED (defined at /Users/mati/Documents/IoT/WATERING_SYSTEM/main/Kconfig.projbuild:62, /Users/mati/esp/esp-idf/components/bt/Kconfig:44) will have no effect, as defaults do not affect choice symbols
+warning: the choice symbol BT_CONTROLLER_ENABLED (defined at /Users/mati/Documents/IoT/WATERING_SYSTEM/main/Kconfig.projbuild:62, /Users/mati/esp/esp-idf/components/bt/Kconfig:44) is defined with a prompt outside the choice
+Compiler supported targets: xtensa-esp32-elf
+

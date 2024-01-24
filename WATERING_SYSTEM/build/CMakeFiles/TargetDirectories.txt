@@ -370,6 +370,7 @@
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/esp_wifi/CMakeFiles/install.dir
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/esp_wifi/CMakeFiles/install/local.dir
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/esp_wifi/CMakeFiles/install/strip.dir
+/Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/bt/CMakeFiles/__idf_bt.dir
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/bt/CMakeFiles/edit_cache.dir
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/bt/CMakeFiles/rebuild_cache.dir
 /Users/mati/Documents/IoT/WATERING_SYSTEM/build/esp-idf/bt/CMakeFiles/list_install_components.dir
