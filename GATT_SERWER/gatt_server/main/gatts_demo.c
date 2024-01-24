@@ -1,17 +1,4 @@
-/*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Unlicense OR CC0-1.0
- */
 
-/****************************************************************************
- *
- * This demo showcases BLE GATT server. It can send adv data, be connected by client.
- * Run the gatt_client demo, the client demo will automatically connect to the gatt_server demo.
- * Client demo will enable gatt_server's notify after connection. The two devices will then exchange
- * data.
- *
- ****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,25 +20,31 @@
 
 #include "sdkconfig.h"
 
-#define GATTS_TAG "GATTS_DEMO"
+#define GATTS_TAG "GATT program_SERVER"
 
 /// Declare the static function
 static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
 
-
-#define GATTS_SERVICE_UUID_TEST_A 0x180F
+#define GATTS_SERVICE_UUID_TEST_A 0xABC1
 #define GATTS_CHAR_UUID_TEST_A 0x2A19
 #define GATTS_DESCR_UUID_TEST_A 0x2902
 #define GATTS_NUM_HANDLE_TEST_A 4
 
 uint8_t battery_value = 85;
 
-#define TEST_DEVICE_NAME "ESP_GATTS_DEMO"
+#define TEST_DEVICE_NAME "ESP_GATTS_SERWER"
 #define TEST_MANUFACTURER_DATA_LEN 17
 
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x40
 
 #define PREPARE_BUF_MAX_SIZE 1024
+
+// nowe:
+#define GATTS_CHAR_UUID_SSID 0xABC1
+#define GATTS_CHAR_UUID_PASS 0xABC2
+
+#define GATTS_NUM_HANDLE_SSID 4
+#define GATTS_NUM_HANDLE_PASS 4
 
 static uint8_t char1_str[] = {0x11, 0x22, 0x33};
 static esp_gatt_char_prop_t a_property = 0;
@@ -67,44 +60,12 @@ static uint8_t adv_config_done = 0;
 #define adv_config_flag (1 << 0)
 #define scan_rsp_config_flag (1 << 1)
 
-
 static uint8_t adv_service_uuid128[32] = {
-    //    //first uuid, 16bit, [12],[13] is the value
-    //     0xFB, 0x34, 0x9B, 0x5F, 0x80, 0x00, 0x00, 0x80, 0x00, 0x10, 0x00, 0x00, 0xFB, 0x18, 0x00, 0x00,
-    // Battery Level Service UUID
-    0xFB,
-    0x34,
-    0x9B,
-    0x5F,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xFB,
-    0x18,
-    0x00,
-    0x00,
-    // second uuid, 32bit, [12], [13], [14], [15] is the value
-    0xFB,
-    0x34,
-    0x9B,
-    0x5F,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // unikalny 128-bitowy UUID (pierwsze 8 bajtów)
+    0x00, 0x00, 0x00, 0x00,                         // unikalny 128-bitowy UUID (kolejne 4 bajty)
+    0x00, 0x00, 0x00, 0x00,                         // unikalny 128-bitowy UUID (kolejne 4 bajty)
+    0x00, 0x00, 0x00, 0x00,                         // unikalny 128-bitowy UUID (kolejne 4 bajty)
+    0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0  // unikalny 128-bitowy UUID (ostatnie 8 bajtów)
 };
 
 // The length of adv data must be less than 31 bytes
@@ -177,11 +138,16 @@ struct gatts_profile_inst
 
 /* One gatt-based profile one app_id and one gatts_if, this array will store the gatts_if returned by ESP_GATTS_REG_EVT */
 static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
+    // Profil dla SSID
     [PROFILE_A_APP_ID] = {
         .gatts_cb = gatts_profile_a_event_handler,
-        .gatts_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+        .gatts_if = ESP_GATT_IF_NONE,
     },
+    // Profil dla hasła
+   
 };
+
+// 
 
 typedef struct
 {
@@ -199,22 +165,7 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 {
     switch (event)
     {
-#ifdef CONFIG_SET_RAW_ADV_DATA
-    case ESP_GAP_BLE_ADV_DATA_RAW_SET_COMPLETE_EVT:
-        adv_config_done &= (~adv_config_flag);
-        if (adv_config_done == 0)
-        {
-            esp_ble_gap_start_advertising(&adv_params);
-        }
-        break;
-    case ESP_GAP_BLE_SCAN_RSP_DATA_RAW_SET_COMPLETE_EVT:
-        adv_config_done &= (~scan_rsp_config_flag);
-        if (adv_config_done == 0)
-        {
-            esp_ble_gap_start_advertising(&adv_params);
-        }
-        break;
-#else
+
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
         adv_config_done &= (~adv_config_flag);
         if (adv_config_done == 0)
@@ -229,7 +180,6 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
             esp_ble_gap_start_advertising(&adv_params);
         }
         break;
-#endif
     case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
         // advertising start complete event to indicate advertising start successfully or failed
         if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS)
@@ -352,20 +302,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         {
             ESP_LOGE(GATTS_TAG, "set device name failed, error code = %x", set_dev_name_ret);
         }
-#ifdef CONFIG_SET_RAW_ADV_DATA
-        esp_err_t raw_adv_ret = esp_ble_gap_config_adv_data_raw(raw_adv_data, sizeof(raw_adv_data));
-        if (raw_adv_ret)
-        {
-            ESP_LOGE(GATTS_TAG, "config raw adv data failed, error code = %x ", raw_adv_ret);
-        }
-        adv_config_done |= adv_config_flag;
-        esp_err_t raw_scan_ret = esp_ble_gap_config_scan_rsp_data_raw(raw_scan_rsp_data, sizeof(raw_scan_rsp_data));
-        if (raw_scan_ret)
-        {
-            ESP_LOGE(GATTS_TAG, "config raw scan rsp data failed, error code = %x", raw_scan_ret);
-        }
-        adv_config_done |= scan_rsp_config_flag;
-#else
+
         // config adv data
         esp_err_t ret = esp_ble_gap_config_adv_data(&adv_data);
         if (ret)
@@ -381,13 +318,12 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         }
         adv_config_done |= scan_rsp_config_flag;
 
-#endif
         esp_ble_gatts_create_service(gatts_if, &gl_profile_tab[PROFILE_A_APP_ID].service_id, GATTS_NUM_HANDLE_TEST_A);
         break;
     case ESP_GATTS_READ_EVT:
     {
 
-        //Przygotowanie danych do wysłania
+        // Przygotowanie danych do wysłania
         esp_gatt_rsp_t rsp;
         memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
         rsp.attr_value.handle = param->read.handle;
@@ -402,6 +338,30 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
     }
     case ESP_GATTS_WRITE_EVT:
     {
+        // nowe
+        if (param->write.handle == gl_profile_tab[PROFILE_A_APP_ID].char_handle)
+        {
+
+            ESP_LOGI(GATTS_TAG, "Odebrano dane dla SSID");
+            // Odebrano dane dla SSID
+            char ssid[32] = {0}; // Zakładając, że SSID ma maksymalnie 32 znaki
+            memcpy(ssid, param->write.value, param->write.len);
+            ssid[param->write.len] = '\0'; // Upewniamy się, że napis jest zakończony null'em
+            ESP_LOGI(GATTS_TAG, "Odebrano SSID: %s", ssid);
+
+            // Tutaj możesz przetwarzać SSID, np. zapisywać w NVS lub inicjować połączenie Wi-Fi
+        }
+        // else if (param->write.handle == gl_profile_tab[PROFILE_B_APP_ID].char_handle)
+        // {
+        //     // Odebrano dane dla hasła
+        //     char password[64] = {0}; // Zakładając, że hasło ma maksymalnie 64 znaki
+        //     memcpy(password, param->write.value, param->write.len);
+        //     password[param->write.len] = '\0';
+        //     ESP_LOGI(GATTS_TAG, "Odebrano hasło");
+
+        //     // Tutaj możesz przetwarzać hasło
+        // }
+
         ESP_LOGI(GATTS_TAG, "GATT_WRITE_EVT, conn_id %d, trans_id %" PRIu32 ", handle %d", param->write.conn_id, param->write.trans_id, param->write.handle);
         if (!param->write.is_prep)
         {
@@ -601,15 +561,16 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
-
-//Task odpowiedzialny za emulowanie stanu baterri w procentach
-static void battery_level_task(){
-    while(1){
+// Task odpowiedzialny za emulowanie stanu baterri w procentach
+static void battery_level_task()
+{
+    while (1)
+    {
         if (battery_value == 100)
         {
             battery_value = 0;
         }
-        
+
         battery_value += 1;
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
@@ -681,7 +642,7 @@ void app_main(void)
         ESP_LOGE(GATTS_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
 
-    //Utworzenie tasku odpowiedzialnego za emulowanie stanu baterii
+    // Utworzenie tasku odpowiedzialnego za emulowanie stanu baterii
     xTaskCreate(&battery_level_task, "battery_level_task", 2048, NULL, 5, NULL);
 
     return;
